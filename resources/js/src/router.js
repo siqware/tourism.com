@@ -84,6 +84,30 @@ const router = new Router({
                         requiresAuth: true
                     }
                 },
+                {
+                    path: '/tour-destination',
+                    name: 'tour-destination',
+                    component: () => import('./views/tour-destination/tour_destination.vue'),
+                    meta:{
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: '/tour-service',
+                    name: 'tour-service',
+                    component: () => import('./views/tour-service/tour_service.vue'),
+                    meta:{
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: '/tour-service-package',
+                    name: 'tour-service-package',
+                    component: () => import('./views/tour-service-package/tour_service_package.vue'),
+                    meta:{
+                        requiresAuth: true
+                    }
+                },
             ],
         },
         // =============================================================================

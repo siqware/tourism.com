@@ -34,6 +34,24 @@ export default [
     icon: "UsersIcon",
   },
   {
+    url: "/tour-destination",
+    name: "Tour  Destination",
+    slug: "tour-destination",
+    icon: "FileIcon",
+  },
+  {
+    url: "/tour-service",
+    name: "Tour Service",
+    slug: "tour-service",
+    icon: "FileIcon",
+  },
+  {
+    url: "/tour-service-package",
+    name: "Tour Service Package",
+    slug: "tour-service-package",
+    icon: "FileIcon",
+  },
+  {
     url: "/page2",
     name: "Page 2",
     slug: "page2",
