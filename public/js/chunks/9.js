@@ -9,10 +9,19 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue2-dropzone */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.js");
-/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-dropzone/dist/vue2Dropzone.min.css */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.min.css");
-/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-dropzone */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.js");
+/* harmony import */ var vue2_dropzone__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue2-dropzone/dist/vue2Dropzone.min.css */ "./node_modules/vue2-dropzone/dist/vue2Dropzone.min.css");
+/* harmony import */ var vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue2_dropzone_dist_vue2Dropzone_min_css__WEBPACK_IMPORTED_MODULE_2__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
 //
 //
 //
@@ -69,7 +78,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "tour_destination",
   components: {
-    vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_0___default.a
+    vueDropzone: vue2_dropzone__WEBPACK_IMPORTED_MODULE_1___default.a
   },
   data: function data() {
     return {
@@ -77,6 +86,10 @@ __webpack_require__.r(__webpack_exports__);
       options: [{
         id: 1,
         title: 'Temple',
+        icon: 'fa-book'
+      }, {
+        id: 2,
+        title: 'Mountain',
         icon: 'fa-book'
       }],
       image: 'images/placeholder/placeholder.png',
@@ -97,6 +110,22 @@ __webpack_require__.r(__webpack_exports__);
         dictDefaultMessage: "ដាក់រូបភាពលម្អិតពីទីតាំងនោះ",
         thumbnailWidth: 150,
         thumbnailHeight: 150
+      },
+      tour_destinations: {
+        type: '',
+        name: '',
+        description: '',
+        destination_x: '',
+        destination_y: '',
+        thumbnail: '',
+        gallery_id: ''
+      },
+      galleries: {
+        name: ''
+      },
+      gallery_details: {
+        gallery_id: '',
+        image: []
       }
     };
   },
@@ -113,19 +142,87 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     //image upload
     successUpload: function successUpload(file, res) {
-      this.image = res.path;
-      console.log(this.image);
+      this.tour_destinations.thumbnail = res.path;
     },
     successUploads: function successUploads(file, res) {
-      this.images.push(res.path);
-      console.log(this.images);
+      this.gallery_details.image.push(res.path);
     },
     //edit thumb
     editThumb: function editThumb() {
       this.$refs.image3.manuallyAddFile({
         size: 123
       }, this.image);
-    }
+    },
+    storeTourDestination: function () {
+      var _storeTourDestination = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var vm, td;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                vm = this;
+                td = vm.tour_destinations;
+                _context2.next = 4;
+                return vm.$store.dispatch('storeGallery', {
+                  'name': td.name
+                }).then(function (res) {
+                  vm.gallery_details.image.map(
+                  /*#__PURE__*/
+                  function () {
+                    var _ref = _asyncToGenerator(
+                    /*#__PURE__*/
+                    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(data) {
+                      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+                        while (1) {
+                          switch (_context.prev = _context.next) {
+                            case 0:
+                              _context.next = 2;
+                              return vm.$store.dispatch('storeGalleryDetail', {
+                                'gallery_id': res,
+                                'name': data
+                              });
+
+                            case 2:
+                            case "end":
+                              return _context.stop();
+                          }
+                        }
+                      }, _callee);
+                    }));
+
+                    return function (_x) {
+                      return _ref.apply(this, arguments);
+                    };
+                  }());
+                  vm.$store.dispatch('storeTourDestination', {
+                    'type': td.type.label_data,
+                    'name': td.name,
+                    'description': td.description,
+                    'destination_x': td.destination_x,
+                    'destination_y': td.destination_y,
+                    'thumbnail': td.thumbnail,
+                    'gallery_id': res
+                  }).then(function (res) {
+                    console.log(res);
+                  });
+                });
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function storeTourDestination() {
+        return _storeTourDestination.apply(this, arguments);
+      }
+
+      return storeTourDestination;
+    }()
   }
 });
 
@@ -207,11 +304,11 @@ var render = function() {
                     }
                   ]),
                   model: {
-                    value: _vm.selected,
+                    value: _vm.tour_destinations.type,
                     callback: function($$v) {
-                      _vm.selected = $$v
+                      _vm.$set(_vm.tour_destinations, "type", $$v)
                     },
-                    expression: "selected"
+                    expression: "tour_destinations.type"
                   }
                 })
               ],
@@ -224,7 +321,14 @@ var render = function() {
               [
                 _c("vs-input", {
                   staticClass: "w-full",
-                  attrs: { "label-placeholder": "Location name" }
+                  attrs: { "label-placeholder": "Location name" },
+                  model: {
+                    value: _vm.tour_destinations.name,
+                    callback: function($$v) {
+                      _vm.$set(_vm.tour_destinations, "name", $$v)
+                    },
+                    expression: "tour_destinations.name"
+                  }
                 })
               ],
               1
@@ -255,17 +359,16 @@ var render = function() {
             _c(
               "div",
               { staticClass: "vx-col md:w-full mt-2" },
-              [_c("tinymce", { attrs: { id: "d1" } })],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "vx-col md:w-1/2" },
               [
-                _c("vs-input", {
-                  staticClass: "w-full",
-                  attrs: { "label-placeholder": "X Coordinate" }
+                _c("tinymce", {
+                  attrs: { id: "d1" },
+                  model: {
+                    value: _vm.tour_destinations.description,
+                    callback: function($$v) {
+                      _vm.$set(_vm.tour_destinations, "description", $$v)
+                    },
+                    expression: "tour_destinations.description"
+                  }
                 })
               ],
               1
@@ -277,7 +380,33 @@ var render = function() {
               [
                 _c("vs-input", {
                   staticClass: "w-full",
-                  attrs: { "label-placeholder": "Y Coordinate" }
+                  attrs: { "label-placeholder": "X Coordinate" },
+                  model: {
+                    value: _vm.tour_destinations.destination_x,
+                    callback: function($$v) {
+                      _vm.$set(_vm.tour_destinations, "destination_x", $$v)
+                    },
+                    expression: "tour_destinations.destination_x"
+                  }
+                })
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "vx-col md:w-1/2" },
+              [
+                _c("vs-input", {
+                  staticClass: "w-full",
+                  attrs: { "label-placeholder": "Y Coordinate" },
+                  model: {
+                    value: _vm.tour_destinations.destination_y,
+                    callback: function($$v) {
+                      _vm.$set(_vm.tour_destinations, "destination_y", $$v)
+                    },
+                    expression: "tour_destinations.destination_y"
+                  }
                 })
               ],
               1
@@ -306,6 +435,7 @@ var render = function() {
             "vs-button",
             {
               attrs: { slot: "button", size: "large", type: "relief" },
+              on: { click: _vm.storeTourDestination },
               slot: "button"
             },
             [_vm._v("That's fine!")]

@@ -18,14 +18,14 @@ class CreateTourDestinationsTable extends Migration
             $table->string('type');
             $table->string('name');
             $table->text('description');
-            $table->string('main_x');
-            $table->string('main_y');
+            $table->string('main_x')->default('13.589120');
+            $table->string('main_y')->default('102.971565');
             $table->string('destination_x');
             $table->string('destination_y');
             $table->string('thumbnail');
             $table->bigInteger('gallery_id');
-            $table->integer('view_count');
-            $table->integer('contact_count');
+            $table->integer('view_count')->default(0);
+            $table->integer('contact_count')->default(0);
             $table->timestamps();
         });
     }

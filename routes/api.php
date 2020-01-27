@@ -26,3 +26,6 @@ Route::post('/user-login', 'UserController@login')->name('user.login');
     Route::post('/user-change-password/{id}', 'UserController@change_password')->name('user.change.password');
     Route::post('/user-json', 'UserController@user_json')->name('user.json');
 //});
+Route::resource('/tour-destination', 'TourDestinationController');
+Route::resource('/gallery', 'GalleryController');
+Route::resource('/gallery-detail', 'GalleryDetailController');

@@ -19,6 +19,9 @@ import actions from "./actions"
 Vue.use(Vuex);
 
 import user from './modules/user'
+import tour_destination from './modules/tour-destination/tour_destination'
+import gallery from './modules/gallery/gallery'
+import gallery_detail from './modules/gallery-detail/gallery_detail'
 export default new Vuex.Store({
     getters,
     mutations,
@@ -26,6 +29,6 @@ export default new Vuex.Store({
     actions,
     strict: process.env.NODE_ENV !== 'production',
     modules: {
-        user,
+        user, tour_destination, gallery, gallery_detail
     }
 })

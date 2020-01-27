@@ -94,6 +94,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -107,9 +124,17 @@ __webpack_require__.r(__webpack_exports__);
       //dropzone option
       dropzoneOptions: {
         url: route('file.upload.thumb'),
-        maxFiles: 1,
+        maxFiles: 10,
         addRemoveLinks: true,
         dictDefaultMessage: "ដាក់រូបភាពទំនិញបើមាន",
+        thumbnailWidth: 150,
+        thumbnailHeight: 150
+      },
+      dropzoneOption: {
+        url: route('file.upload.thumb'),
+        maxFiles: 1,
+        addRemoveLinks: true,
+        dictDefaultMessage: "ដាក់រូបភាព Thumbnail",
         thumbnailWidth: 150,
         thumbnailHeight: 150
       },
@@ -118,22 +143,80 @@ __webpack_require__.r(__webpack_exports__);
       editor: null,
       cTinyMce: null,
       checkerTimeout: null,
-      isTyping: false
+      isTyping: false,
+      //Select
+      selected: null,
+      options: [{
+        id: 1,
+        title: 'Hotel',
+        icon: 'fa-book'
+      }, {
+        id: 2,
+        title: 'Restaurant',
+        icon: 'fa-book'
+      }],
+      services: {
+        type: '',
+        name: '',
+        contact: '',
+        thumbnail: '',
+        destination_x: '',
+        destination_y: ''
+      },
+      service_details: [],
+      detail_item: {
+        sub_name: '',
+        qty: 1,
+        description: '',
+        gallery_item: []
+      }
     };
   },
-  mounted: function mounted() {
-    this.init();
+  computed: {
+    new_options: function new_options() {
+      return this.options.map(function (x) {
+        return {
+          id: x.id,
+          label_data: "".concat(x.title)
+        };
+      });
+    }
   },
   methods: {
     //image upload
     successUpload: function successUpload(file, res) {
-      this.image = res.path;
+      this.services.thumbnail = res.path;
+    },
+    successUploads: function successUploads(file, res) {
+      this.detail_item.gallery_item.push(res.path);
     },
     //edit thumb
     editThumb: function editThumb() {
       this.$refs.image3.manuallyAddFile({
         size: 123
       }, this.image);
+    },
+    addServiceDetail: function addServiceDetail() {
+      var di = this.detail_item;
+      this.service_detail.push({
+        service_id: 0,
+        gallery_id: 0,
+        service_item: di.sub_name,
+        item_qty: di.qty,
+        item_description: di.description,
+        images: di.gallery_item,
+        is_available: true
+      });
+      this.$refs.image.removeAllFiles();
+      this.clearDetail();
+      console.log(this.service_detail);
+    },
+    clearDetail: function clearDetail() {
+      var di = this.detail_item;
+      di.sub_name = '';
+      di.gallery_item = [];
+      di.description = '';
+      di.qty = 1;
     }
   }
 });
@@ -199,11 +282,36 @@ var render = function() {
             [
               _c(
                 "div",
-                { staticClass: "vx-col md:w-1/2" },
+                { staticClass: "vx-col md:w-1/3 mt-5" },
                 [
-                  _c("vs-input", {
-                    staticClass: "w-full",
-                    attrs: { "label-placeholder": "Type" }
+                  _c("v-select", {
+                    attrs: {
+                      clearable: false,
+                      placeholder: "Please select a location type",
+                      options: _vm.new_options,
+                      label: "label_data"
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "option",
+                        fn: function(option) {
+                          return [
+                            _vm._v(
+                              "\n                        " +
+                                _vm._s(option.label_data) +
+                                "\n                    "
+                            )
+                          ]
+                        }
+                      }
+                    ]),
+                    model: {
+                      value: _vm.services.type,
+                      callback: function($$v) {
+                        _vm.$set(_vm.services, "type", $$v)
+                      },
+                      expression: "services.type"
+                    }
                   })
                 ],
                 1
@@ -211,11 +319,36 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "div",
-                { staticClass: "vx-col md:w-1/2" },
+                { staticClass: "vx-col md:w-1/3" },
                 [
                   _c("vs-input", {
                     staticClass: "w-full",
-                    attrs: { "label-placeholder": "Name" }
+                    attrs: { "label-placeholder": "Name" },
+                    model: {
+                      value: _vm.services.name,
+                      callback: function($$v) {
+                        _vm.$set(_vm.services, "name", $$v)
+                      },
+                      expression: "services.name"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "vx-col md:w-1/3" },
+                [
+                  _c("vue-dropzone", {
+                    ref: "image2",
+                    staticClass: "max-content p-1",
+                    attrs: {
+                      duplicateCheck: true,
+                      id: "dropzone2",
+                      options: _vm.dropzoneOption
+                    },
+                    on: { "vdropzone-success": _vm.successUpload }
                   })
                 ],
                 1
@@ -227,7 +360,52 @@ var render = function() {
                 [
                   _c("vs-textarea", {
                     staticClass: "w-full",
-                    attrs: { label: "Contacts" }
+                    attrs: { label: "Contacts" },
+                    model: {
+                      value: _vm.services.contact,
+                      callback: function($$v) {
+                        _vm.$set(_vm.services, "contact", $$v)
+                      },
+                      expression: "services.contact"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "vx-col md:w-1/2" },
+                [
+                  _c("vs-input", {
+                    staticClass: "w-full",
+                    attrs: { "label-placeholder": "X Coordinate" },
+                    model: {
+                      value: _vm.services.destination_x,
+                      callback: function($$v) {
+                        _vm.$set(_vm.services, "destination_x", $$v)
+                      },
+                      expression: "services.destination_x"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "vx-col md:w-1/2" },
+                [
+                  _c("vs-input", {
+                    staticClass: "w-full",
+                    attrs: { "label-placeholder": "Y Coordinate" },
+                    model: {
+                      value: _vm.services.destination_y,
+                      callback: function($$v) {
+                        _vm.$set(_vm.services, "destination_y", $$v)
+                      },
+                      expression: "services.destination_y"
+                    }
                   })
                 ],
                 1
@@ -243,7 +421,14 @@ var render = function() {
                 [
                   _c("vs-input", {
                     staticClass: "w-full",
-                    attrs: { "label-placeholder": "Sub-name" }
+                    attrs: { "label-placeholder": "Sub-name" },
+                    model: {
+                      value: _vm.detail_item.sub_name,
+                      callback: function($$v) {
+                        _vm.$set(_vm.detail_item, "sub_name", $$v)
+                      },
+                      expression: "detail_item.sub_name"
+                    }
                   })
                 ],
                 1
@@ -255,7 +440,14 @@ var render = function() {
                 [
                   _c("vs-input", {
                     staticClass: "w-full",
-                    attrs: { "label-placeholder": "Quality" }
+                    attrs: { "label-placeholder": "Quality" },
+                    model: {
+                      value: _vm.detail_item.qty,
+                      callback: function($$v) {
+                        _vm.$set(_vm.detail_item, "qty", $$v)
+                      },
+                      expression: "detail_item.qty"
+                    }
                   })
                 ],
                 1
@@ -264,7 +456,18 @@ var render = function() {
               _c(
                 "div",
                 { staticClass: "vx-col md:w-full mt-2 mb-2" },
-                [_c("tinymce", { attrs: { id: "d1" } })],
+                [
+                  _c("tinymce", {
+                    attrs: { id: "d1" },
+                    model: {
+                      value: _vm.detail_item.description,
+                      callback: function($$v) {
+                        _vm.$set(_vm.detail_item, "description", $$v)
+                      },
+                      expression: "detail_item.description"
+                    }
+                  })
+                ],
                 1
               ),
               _vm._v(" "),
@@ -280,7 +483,7 @@ var render = function() {
                       id: "dropzone",
                       options: _vm.dropzoneOptions
                     },
-                    on: { "vdropzone-success": _vm.successUpload }
+                    on: { "vdropzone-success": _vm.successUploads }
                   })
                 ],
                 1
@@ -294,9 +497,14 @@ var render = function() {
               "div",
               { staticClass: "vx-col md:w-1/3 mt-2 mb-2" },
               [
-                _c("vs-button", { attrs: { size: "large", type: "relief" } }, [
-                  _vm._v("Add Item")
-                ])
+                _c(
+                  "vs-button",
+                  {
+                    attrs: { type: "relief" },
+                    on: { click: _vm.addServiceDetail }
+                  },
+                  [_vm._v("Add Item")]
+                )
               ],
               1
             )
@@ -318,11 +526,11 @@ var render = function() {
                         [
                           _c(
                             "vs-td",
-                            { attrs: { data: data[indextr].kh_name } },
+                            { attrs: { data: data[indextr].service_item } },
                             [
                               _vm._v(
                                 "\n                        " +
-                                  _vm._s(data[indextr].kh_name) +
+                                  _vm._s(data[indextr].service_item) +
                                   "\n                    "
                               )
                             ]
@@ -330,11 +538,11 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "vs-td",
-                            { attrs: { data: data[indextr].en_name } },
+                            { attrs: { data: data[indextr].item_qty } },
                             [
                               _vm._v(
                                 "\n                        " +
-                                  _vm._s(data[indextr].en_name) +
+                                  _vm._s(data[indextr].item_qty) +
                                   "\n                    "
                               )
                             ]
@@ -342,26 +550,26 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "vs-td",
-                            { attrs: { data: data[indextr].gender } },
+                            { attrs: { data: data[indextr].item_description } },
                             [
-                              _vm._v(
-                                "\n                        " +
-                                  _vm._s(data[indextr].gender) +
-                                  "\n                    "
-                              )
+                              _c("p", {
+                                domProps: {
+                                  innerHTML: _vm._s(tr.item_description)
+                                }
+                              })
                             ]
                           ),
                           _vm._v(" "),
                           _c(
                             "vs-td",
-                            { attrs: { data: data[indextr].gender } },
-                            [
-                              _vm._v(
-                                "\n                        " +
-                                  _vm._s(data[indextr].gender) +
-                                  "\n                    "
-                              )
-                            ]
+                            { attrs: { data: data[indextr].images } },
+                            _vm._l(tr.images, function(item, i) {
+                              return _c("img", {
+                                key: i,
+                                attrs: { height: "30", src: item, alt: "" }
+                              })
+                            }),
+                            0
                           )
                         ],
                         1

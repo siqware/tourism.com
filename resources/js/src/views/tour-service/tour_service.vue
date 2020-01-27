@@ -7,30 +7,46 @@
         <sweet-modal ref="modal" title="Tour Service" :blocking="true" :width="!mobilecheck()?'90%':''">
             <vs-divider position="left">Service</vs-divider>
             <div class="vx-row">
-                <div class="vx-col md:w-1/2">
-                    <vs-input class="w-full" label-placeholder="Type"/>
+                <div class="vx-col md:w-1/3 mt-5">
+                    <v-select :clearable="false" v-model="services.type" placeholder="Please select a location type" :options="new_options" label="label_data">
+                        <template v-slot:option="option">
+                            {{ option.label_data }}
+                        </template>
+                    </v-select>
                 </div>
-                <div class="vx-col md:w-1/2">
-                    <vs-input class="w-full" label-placeholder="Name"/>
+                <div class="vx-col md:w-1/3">
+                    <vs-input class="w-full" v-model="services.name" label-placeholder="Name"/>
+                </div>
+                <div class="vx-col md:w-1/3">
+                    <vue-dropzone class="max-content p-1" :duplicateCheck="true" ref="image2"
+                                  @vdropzone-success="successUpload" id="dropzone2"
+                                  :options="dropzoneOption">
+                    </vue-dropzone>
                 </div>
                 <div class="vx-col md:w-full mt-2">
-                    <vs-textarea label="Contacts" class="w-full"/>
+                    <vs-textarea label="Contacts" v-model="services.contact" class="w-full"/>
                 </div>
+                <div class="vx-col md:w-1/2">
+                    <vs-input class="w-full" v-model="services.destination_x" label-placeholder="X Coordinate"/>
+                </div>
+                <div class="vx-col md:w-1/2">
+                    <vs-input class="w-full" v-model="services.destination_y" label-placeholder="Y Coordinate"/>
 
+                </div>
                 <vs-divider position="left">Detail</vs-divider>
 
                 <div class="vx-col md:w-1/2">
-                    <vs-input class="w-full" label-placeholder="Sub-name"/>
+                    <vs-input class="w-full" v-model="detail_item.sub_name" label-placeholder="Sub-name"/>
                 </div>
                 <div class="vx-col md:w-1/2">
-                    <vs-input class="w-full" label-placeholder="Quality"/>
+                    <vs-input class="w-full" v-model="detail_item.qty" label-placeholder="Quality"/>
                 </div>
                 <div class="vx-col md:w-full mt-2 mb-2">
-                    <tinymce id="d1"></tinymce>
+                    <tinymce id="d1" v-model="detail_item.description"></tinymce>
                 </div>
                 <div class="vx-col w-full">
                     <vue-dropzone class="p-1" :duplicateCheck="true" ref="image"
-                                  @vdropzone-success="successUpload" id="dropzone"
+                                  @vdropzone-success="successUploads" id="dropzone"
                                   :options="dropzoneOptions"
                     >
                     </vue-dropzone>
@@ -39,7 +55,7 @@
 
             <div class="vx-row">
                 <div class="vx-col md:w-1/3 mt-2 mb-2">
-                    <vs-button size="large" type="relief">Add Item</vs-button>
+                    <vs-button @click="addServiceDetail" type="relief">Add Item</vs-button>
                 </div>
             </div>
             <vs-table max-items="100" :data="service_detail">
@@ -54,20 +70,21 @@
                 <template slot-scope="{data}">
                     <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
 
-                        <vs-td :data="data[indextr].kh_name">
-                            {{ data[indextr].kh_name }}
+                        <vs-td :data="data[indextr].service_item">
+                            {{ data[indextr].service_item }}
                         </vs-td>
 
-                        <vs-td :data="data[indextr].en_name">
-                            {{ data[indextr].en_name }}
+                        <vs-td :data="data[indextr].item_qty">
+                            {{ data[indextr].item_qty }}
                         </vs-td>
 
-                        <vs-td :data="data[indextr].gender">
-                            {{ data[indextr].gender }}
+                        <vs-td :data="data[indextr].item_description">
+                            <p v-html="tr.item_description"></p>
                         </vs-td>
 
-                        <vs-td :data="data[indextr].gender">
-                            {{ data[indextr].gender }}
+                        <vs-td :data="data[indextr].images">
+                            <!--{{ data[indextr].images }}?-->
+                            <img height="30" v-for="(item, i) in tr.images" :src="item" :key="i" alt="">
                         </vs-td>
                     </vs-tr>
                 </template>
@@ -93,9 +110,17 @@
                 //dropzone option
                 dropzoneOptions: {
                     url: route('file.upload.thumb'),
-                    maxFiles: 1,
+                    maxFiles: 10,
                     addRemoveLinks: true,
                     dictDefaultMessage: "ដាក់រូបភាពទំនិញបើមាន",
+                    thumbnailWidth: 150,
+                    thumbnailHeight: 150,
+                },
+                dropzoneOption: {
+                    url: route('file.upload.thumb'),
+                    maxFiles: 1,
+                    addRemoveLinks: true,
+                    dictDefaultMessage: "ដាក់រូបភាព Thumbnail",
                     thumbnailWidth: 150,
                     thumbnailHeight: 150,
                 },
@@ -104,21 +129,81 @@
                 editor: null,
                 cTinyMce: null,
                 checkerTimeout: null,
-                isTyping: false
+                isTyping: false,
+                //Select
+                selected:null,
+                options: [
+                    {
+                        id:1,
+                        title: 'Hotel',
+                        icon: 'fa-book',
+                    },{
+                        id:2,
+                        title: 'Restaurant',
+                        icon: 'fa-book',
+                    },
+                ],
+                services: {
+                    type: '',
+                    name: '',
+                    contact: '',
+                    thumbnail: '',
+                    destination_x: '',
+                    destination_y: '',
+                },
+                service_details: [],
+                detail_item: {
+                    sub_name: '',
+                    qty: 1,
+                    description: '',
+                    gallery_item: []
+                }
             }
         },
-        mounted() {
-            this.init();
+        computed: {
+            new_options(){
+                return this.options.map(function (x){
+                    return {
+                        id:x.id,
+                        label_data:`${x.title}`
+                    }
+                });
+            }
         },
         methods:{
             //image upload
             successUpload(file, res) {
-                this.image = (res.path)
+                this.services.thumbnail = (res.path);
+            },
+            successUploads(file, res) {
+                this.detail_item.gallery_item.push(res.path);
             },
             //edit thumb
             editThumb(){
                 this.$refs.image3.manuallyAddFile({size:123}, this.image);
             },
+            addServiceDetail(){
+                let di = this.detail_item;
+                this.service_detail.push({
+                    service_id: 0,
+                    gallery_id: 0,
+                    service_item: di.sub_name,
+                    item_qty: di.qty,
+                    item_description: di.description,
+                    images: di.gallery_item,
+                    is_available: true,
+                });
+                this.$refs.image.removeAllFiles();
+                this.clearDetail();
+                console.log(this.service_detail)
+            },
+            clearDetail(){
+                var di = this.detail_item;
+                di.sub_name = '';
+                di.gallery_item = [];
+                di.description = '';
+                di.qty = 1;
+            }
         }
     }
 </script>
